@@ -41,3 +41,12 @@ example
 # generated native folders
 /ios
 /android
+
+# ==========================================
+# Backend (Go)
+# ==========================================
+# backend フォルダ内のバイナリや環境変数
+backend/.env
+backend/bin/
+backend/tmp/
+backend/*.exe
