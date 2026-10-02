@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -63,4 +64,33 @@ func (h *RegistrationHandler) CreateRegistration(w http.ResponseWriter, r *http.
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
 	json.NewEncoder(w).Encode(res)
+}
+
+func (h *RegistrationHandler) DeleteRegistration(w http.ResponseWriter, r *http.Request) {
+	uIDStr := r.PathValue("user_id")
+	rIDStr := r.PathValue("registration_id")
+
+	userID, err1 := strconv.Atoi(uIDStr)
+	registrationID, err2 := strconv.Atoi(rIDStr)
+
+	if err1 != nil || userID <= 0 || err2 != nil || registrationID <= 0 {
+		http.Error(w, "Invalid user ID or registration ID", http.StatusBadRequest)
+		return
+	}
+
+	err := h.svc.DeleteRegistration(userID, registrationID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "Registration not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Registration deleted successfully",
+	})
 }

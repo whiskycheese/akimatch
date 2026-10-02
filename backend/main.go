@@ -77,13 +77,14 @@ func main() {
 
 	// 8.API のエンドポイントを登録
 	http.HandleFunc("/api/universities", univHandler.GetAllUniversities)
-	
+
 	http.HandleFunc("GET /api/universities/{id}/faculties", facultyHandler.GetFacultiesByUniversityID)
 
 	http.HandleFunc("GET /api/universities/{university_id}/faculties/{faculty_id}/courses", courseHandler.GetCoursesByUniversityAndFacultyID)
 
 	http.HandleFunc("GET /api/users/{user_id}/registrations", regHandler.GetRegistrationsByUserID)
 	http.HandleFunc("POST /api/users/{user_id}/registrations", regHandler.CreateRegistration)
+	http.HandleFunc("DELETE /api/users/{user_id}/registrations/{registration_id}", regHandler.DeleteRegistration)
 
 	// 9. サーバー起動
 	port := os.Getenv("PORT")

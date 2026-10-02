@@ -75,3 +75,24 @@ func (r *RegistrationRepository) Create(userID int, req schema.CreateRegistratio
 
 	return &reg, nil
 }
+
+// 履修登録の削除
+func (r *RegistrationRepository) Delete(userID, registrationID int) error {
+	query := `DELETE FROM registrations WHERE id = $1 AND user_id = $2`
+	
+	result, err := r.db.Exec(query, registrationID, userID)
+	if err != nil {
+		return err
+	}
+
+	// 削除された行数を確認
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows // 削除対象が存在しなかった、または他のユーザーのデータ
+	}
+
+	return nil
+}

@@ -20,3 +20,7 @@ func (s *RegistrationService) GetRegistrationsByUserID(userID int) ([]schema.Reg
 func (s *RegistrationService) CreateRegistration(userID int, req schema.CreateRegistrationRequest) (*schema.RegistrationResponse, error) {
 	return s.repo.Create(userID, req)
 }
+
+func (s *RegistrationService) DeleteRegistration(userID, registrationID int) error {
+	return s.repo.Delete(userID, registrationID)
+}
