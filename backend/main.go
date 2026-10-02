@@ -53,6 +53,10 @@ func main() {
 	univSvc := service.NewUniversityService(univRepo)
 	univHandler := handler.NewUniversityHandler(univSvc)
 
+	facultyRepo := repository.NewFacultyRepository(db)
+  facultySvc := service.NewFacultyService(facultyRepo)
+  facultyHandler := handler.NewFacultyHandler(facultySvc)
+
 	// 7. ルーティング設定
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		if err := db.Ping(); err != nil {
@@ -63,8 +67,9 @@ func main() {
 		fmt.Fprintln(w, "OK (DB Connected)")
 	})
 
-	// 8.大学一覧取得 API のエンドポイントを登録
+	// 8.API のエンドポイントを登録
 	http.HandleFunc("/api/universities", univHandler.GetAllUniversities)
+	http.HandleFunc("GET /api/universities/{id}/faculties", facultyHandler.GetFacultiesByUniversityID)
 
 	// 9. サーバー起動
 	port := os.Getenv("PORT")
