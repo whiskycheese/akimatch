@@ -18,6 +18,16 @@ func (s *RegistrationService) GetRegistrationsByUserID(userID int) ([]schema.Reg
 }
 
 func (s *RegistrationService) CreateRegistration(userID int, req schema.CreateRegistrationRequest) (*schema.RegistrationResponse, error) {
+	// 1. 同一コマの重複チェック
+	exists, err := s.repo.Exists(userID, req.Day, req.Period)
+	if err != nil {
+		return nil, err
+	}
+	if exists {
+		return nil, ErrAlreadyRegistered
+	}
+
+	// 2. 問題なければ新規登録実行
 	return s.repo.Create(userID, req)
 }
 

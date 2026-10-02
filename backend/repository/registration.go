@@ -96,3 +96,20 @@ func (r *RegistrationRepository) Delete(userID, registrationID int) error {
 
 	return nil
 }
+
+// 指定したユーザー・曜日・時限に既に登録があるかチェックする
+func (r *RegistrationRepository) Exists(userID int, day string, period int) (bool, error) {
+	query := `
+		SELECT EXISTS(
+			SELECT 1 FROM registrations 
+			WHERE user_id = $1 AND day = $2 AND period = $3
+		)`
+
+	var exists bool
+	err := r.db.QueryRow(query, userID, day, period).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}

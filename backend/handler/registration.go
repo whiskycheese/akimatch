@@ -3,6 +3,7 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"backend/service"
@@ -57,6 +58,11 @@ func (h *RegistrationHandler) CreateRegistration(w http.ResponseWriter, r *http.
 
 	res, err := h.svc.CreateRegistration(userID, req)
 	if err != nil {
+		// 重複エラーの場合は 409 Conflict を返す
+		if errors.Is(err, service.ErrAlreadyRegistered) {
+			http.Error(w, err.Error(), http.StatusConflict)
+			return
+		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
