@@ -25,3 +25,14 @@ func (s *UserService) GetUserByID(id int) (*schema.UserResponse, error) {
 	}
 	return u, nil
 }
+
+func (s *UserService) GetUserByShareCode(code string) (*schema.UserResponse, error) {
+	u, err := s.repo.GetByShareCode(code)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
+	}
+	return u, nil
+}

@@ -98,6 +98,7 @@ func main() {
 	http.HandleFunc("GET /api/users/{user_id}/friends", friendHandler.GetFriends)
 
 	http.HandleFunc("GET /api/users/{user_id}", userHandler.GetUserByID)
+	http.HandleFunc("GET /api/users/search", userHandler.SearchUserByShareCode)
 
 	// 9. サーバー起動
 	port := os.Getenv("PORT")
