@@ -69,6 +69,10 @@ func main() {
 	friendSvc := service.NewFriendshipService(friendRepo)
 	friendHandler := handler.NewFriendshipHandler(friendSvc)
 
+	userRepo := repository.NewUserRepository(db)
+	userSvc := service.NewUserService(userRepo)
+	userHandler := handler.NewUserHandler(userSvc)
+
 	// 7. ルーティング設定
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		if err := db.Ping(); err != nil {
@@ -92,6 +96,8 @@ func main() {
 
 	http.HandleFunc("POST /api/users/{user_id}/friends", friendHandler.AddFriend)
 	http.HandleFunc("GET /api/users/{user_id}/friends", friendHandler.GetFriends)
+
+	http.HandleFunc("GET /api/users/{user_id}", userHandler.GetUserByID)
 
 	// 9. サーバー起動
 	port := os.Getenv("PORT")
