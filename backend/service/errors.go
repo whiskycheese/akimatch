@@ -9,6 +9,7 @@ var (
 	// 友達（Friendship）関連エラー
 	ErrCannotAddSelf = errors.New("cannot add yourself as a friend")
 	ErrAlreadyFriend = errors.New("user is already your friend")
+	ErrNotFriends    = errors.New("you are not friends with this user")
 
 	// ユーザー（User）関連エラー
 	ErrUserNotFound  = errors.New("user not found")

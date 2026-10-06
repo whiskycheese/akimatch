@@ -61,13 +61,13 @@ func main() {
 	courseSvc := service.NewCourseService(courseRepo)
 	courseHandler := handler.NewCourseHandler(courseSvc)
 
-	regRepo := repository.NewRegistrationRepository(db)
-	regSvc := service.NewRegistrationService(regRepo)
-	regHandler := handler.NewRegistrationHandler(regSvc)
-
 	friendRepo := repository.NewFriendshipRepository(db)
 	friendSvc := service.NewFriendshipService(friendRepo)
 	friendHandler := handler.NewFriendshipHandler(friendSvc)
+
+	regRepo := repository.NewRegistrationRepository(db)
+	regSvc := service.NewRegistrationService(regRepo, friendRepo)
+	regHandler := handler.NewRegistrationHandler(regSvc)
 
 	userRepo := repository.NewUserRepository(db)
 	userSvc := service.NewUserService(userRepo)
@@ -99,6 +99,8 @@ func main() {
 
 	http.HandleFunc("GET /api/users/{user_id}", userHandler.GetUserByID)
 	http.HandleFunc("GET /api/users/search", userHandler.SearchUserByShareCode)
+
+	http.HandleFunc("GET /api/users/{user_id}/friends/{friend_id}/registrations", regHandler.GetFriendRegistrations)
 
 	// 9. サーバー起動
 	port := os.Getenv("PORT")

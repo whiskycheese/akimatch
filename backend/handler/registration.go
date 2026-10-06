@@ -100,3 +100,30 @@ func (h *RegistrationHandler) DeleteRegistration(w http.ResponseWriter, r *http.
 		"message": "Registration deleted successfully",
 	})
 }
+
+// GET /api/users/{user_id}/friends/{friend_id}/registrations
+func (h *RegistrationHandler) GetFriendRegistrations(w http.ResponseWriter, r *http.Request) {
+	uIDStr := r.PathValue("user_id")
+	fIDStr := r.PathValue("friend_id")
+
+	userID, err1 := strconv.Atoi(uIDStr)
+	friendID, err2 := strconv.Atoi(fIDStr)
+
+	if err1 != nil || userID <= 0 || err2 != nil || friendID <= 0 {
+		http.Error(w, "Invalid user ID or friend ID", http.StatusBadRequest)
+		return
+	}
+
+	list, err := h.svc.GetFriendRegistrations(userID, friendID)
+	if err != nil {
+		if errors.Is(err, service.ErrNotFriends) {
+			http.Error(w, "Access denied: you are not friends with this user", http.StatusForbidden) // 403 Forbidden
+			return
+		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(list)
+}
